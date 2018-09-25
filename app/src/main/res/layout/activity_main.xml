@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="@dimen/activity_horizontal_margin"
+    tools:context="de.aitronic.scannerdemo.MainActivity">
+
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:checkedButton="@+id/rbBarcode">
+        <RadioButton
+            android:id="@+id/rbBarcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18dp"
+
+            android:text="Barcode" />
+
+        <RadioButton
+            android:id="@+id/rbRFID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18dp"
+            android:text="RFID" />
+    </RadioGroup>
+
+    <Switch
+        android:id="@+id/swEnable2o5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text = "Enable 2/5 codes"
+        android:textSize="18dp"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        />
+
+    <Button android:id="@+id/startScan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start scan"/>
+    <Button android:id="@+id/stopScan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop scan"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/codes_lv" />
+
+
+</LinearLayout>
