@@ -120,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
                 soundManager.playSound(1);
 
 
+                // EXAMPLE on how to use SIMPLE_COMMANDS to read more data from a tag
+                /*
                 if (type.equals("#80")) {
                     Log.e("MainActivity", "MIFARE FOUND, STARTING GET VERSION");
                     Intent intent_login = new Intent("de.aitronic.scanner.SIMPLE_COMMAND");
@@ -134,9 +136,17 @@ public class MainActivity extends AppCompatActivity {
 
                     // SIMPLE COMMAND ARRAY
                     // WRITE BLOCK 0500 AND READ BLOCK 0500
-                    intent_login.putExtra("simpleCommandArray", new String[]{"0D0705000411223344", "0D050500FF"});
+                    intent_login.putExtra("simpleCommandArray", new String[]{
+                            "0D070300081122334455667788",
+                            "0D050000FF",
+                            "0D050100FF",
+                            "0D050200FF",
+                            "0D050300FF",
+                            "0D050400FF",
+                            "0D050500FF"
+                    });
                     sendBroadcast(intent_login);
-                }
+                }*/
             }else{
                 // Result von Single SimpleCommand
                 String result = intent.getStringExtra("result");
@@ -184,6 +194,10 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+
+    // Use the defined scanner buttons in Devin instead and the SimpleCommand
+    // de.aitronic.scanner.SCANNER_TYPES_SET to define which Module to start
+    @Deprecated
     @OnClick({R.id.startScan, R.id.stopScan})
     public void onButtonClick(View view){
         switch(view.getId()){
@@ -295,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
         if (barcode)
             i.putExtra("scanner_types", 1);
         else
-            i.putExtra("scanner_types", 14);
+            i.putExtra("scanner_types", 22);
         sendBroadcast(i);
     }
 
