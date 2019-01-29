@@ -1,11 +1,9 @@
-/**
- * 
- * aitronic GmbH - www.aitronic.de
- * 
- * ScannerDemo-Devin
- * 
- * Licensed under GPLv3
- * 
+/*
+  aitronic GmbH - www.aitronic.de
+  <p>
+  ScannerDemo-Devin
+  <p>
+  Licensed under GPLv3
  */
 
 package de.aitronic.scannerdemo;
@@ -50,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static HashMap<String, String> MAPPING = new HashMap<>();
 
-    static{
+    static {
         MAPPING.put("A", "EAN/UPC");
         MAPPING.put("B", "Code 39/32");
         MAPPING.put("C", "Codabar");
@@ -88,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     ArrayList<String[]> codes = new ArrayList();
     MyArrayAdapter lvAdapter;
 
@@ -107,9 +104,10 @@ public class MainActivity extends AppCompatActivity {
                     type = MAPPING.get(type);
                 }
 
+                // display last 10 results
                 codes.add(0, new String[]{type, result});
-                if (codes.size() > 5)
-                    codes.subList(5, codes.size()).clear();
+                if (codes.size() > 10)
+                    codes.subList(10, codes.size()).clear();
                 lvAdapter.notifyDataSetChanged();
                 lvCodes.post(new Runnable() {
                     public void run() {
@@ -121,13 +119,15 @@ public class MainActivity extends AppCompatActivity {
 
 
                 // EXAMPLE on how to use SIMPLE_COMMANDS to read more data from a tag
-                /*
                 if (type.equals("#80")) {
+                    // Example of Mifare Read Blocks
+                    // Mifare Read
                     Log.e("MainActivity", "MIFARE FOUND, STARTING GET VERSION");
                     Intent intent_login = new Intent("de.aitronic.scanner.SIMPLE_COMMAND");
                     intent_login.putExtra("simpleCommand", "0004FF");
                     sendBroadcast(intent_login);
-                }else if (type.equals("#82")){
+                } else if (type.equals("#82")) {
+                    // Example of Special Read Blocks for ISO15693
                     Log.e("MainActivity", "ISO15693 FOUND, STARTING GET SystemInformation");
                     Intent intent_login = new Intent("de.aitronic.scanner.SIMPLE_COMMAND");
 
@@ -146,19 +146,64 @@ public class MainActivity extends AppCompatActivity {
                             "0D050500FF"
                     });
                     sendBroadcast(intent_login);
-                }*/
-            }else{
+                    //} else if (type.equals("#F0"))  {
+                    // Available from Devin >= 1.8.0
+
+                    // EXAMPLE TO READ AND WRITE BLOCKS ON UHF
+
+                    /*
+                     RESERVED(0),
+                    UII((1),
+                    TID(2),
+                    USER(3),
+                    DIGITAL_SIGNATURE(4);
+                     */
+
+
+                    /*
+                    // Write UHF
+                    // Writes data to the selected location and reads the segment that should have been
+                    // written. It sends back the read data as a SIMPLE_COMMAND_RESULT
+                    Intent intent_login = new Intent("de.aitronic.uhfscanner.WRITE_DATA");
+                    intent_login.putExtra("bank", 1);
+                    intent_login.putExtra("data", "2423"); // Hex-Data, length has to be multiples of 4 (=Word = 2bytes)
+                    intent_login.putExtra("offset", 2);
+                    intent_login.putExtra("accessPassword", "00000000"); // default often is 00000000
+                    sendBroadcast(intent_login);
+                    */
+
+
+                    // Read UHF
+                    // Reads data from the selected location
+                    // It sends back the read data as a SIMPLE_COMMAND_RESULT
+
+
+                    // Set Power to Lowest possible value, to prevent reading other tags
+                    /*
+                    Intent power = new Intent("de.aitronic.uhfscanner.SET_POWER");
+                    power.putExtra("power", "5");
+                    sendBroadcast(power);
+
+                    Intent intent_login = new Intent("de.aitronic.uhfscanner.READ_DATA");
+                    intent_login.putExtra("bank", 1);
+                    intent_login.putExtra("count", 6); // reads 6 "words = 2bytes"
+                    intent_login.putExtra("offset", 2);
+                    intent_login.putExtra("accessPassword", "00000000"); // default often is 00000000
+                    sendBroadcast(intent_login);
+                    */
+                }
+            } else {
                 // Result von Single SimpleCommand
                 String result = intent.getStringExtra("result");
                 // Result-Array von Multi SimpleCommand
                 String[] resultArray = intent.getStringArrayExtra("resultArray");
                 if (result != null)
-                    Log.e("ScannerDemo", "RESULT: "+result);
+                    Log.e("ScannerDemo", "RESULT: " + result);
 
                 if (resultArray != null)
-                    Log.e("ScannerDemo", "RESULT ARRAY: "+join(resultArray));
+                    Log.e("ScannerDemo", "RESULT ARRAY: " + join(resultArray));
 
-                Toast.makeText(MainActivity.this, "RESULT: "+result, Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "RESULT: " + result, Toast.LENGTH_LONG).show();
             }
 
         }
@@ -199,13 +244,13 @@ public class MainActivity extends AppCompatActivity {
     // de.aitronic.scanner.SCANNER_TYPES_SET to define which Module to start
     @Deprecated
     @OnClick({R.id.startScan, R.id.stopScan})
-    public void onButtonClick(View view){
-        switch(view.getId()){
+    public void onButtonClick(View view) {
+        switch (view.getId()) {
             case R.id.startScan:
                 Intent i = new Intent();
                 if (rbBarcode.isChecked()) {
                     i.setAction("de.aitronic.scanner.START_BARCODE");
-                }else{
+                } else {
                     i.setAction("de.aitronic.scanner.START_RFID");
                 }
                 this.sendBroadcast(i);
@@ -214,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent i2 = new Intent();
                 if (rbBarcode.isChecked()) {
                     i2.setAction("de.aitronic.scanner.STOP_BARCODE");
-                }else{
+                } else {
                     i2.setAction("de.aitronic.scanner.STOP_RFID");
                 }
                 this.sendBroadcast(i2);
@@ -232,9 +277,9 @@ public class MainActivity extends AppCompatActivity {
         filters.addAction("de.aitronic.SCAN_DATA");
         filters.addAction("de.aitronic.scanner.SIMPLE_COMMAND_RESULT");
         registerReceiver(scanBroadcastReceiver, filters);
-        if (rbBarcode.isChecked()){
+        if (rbBarcode.isChecked()) {
             setTypesToScan(true);
-        }else{
+        } else {
             setTypesToScan(false);
         }
     }
@@ -255,15 +300,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnCheckedChanged(R.id.swEnable2o5)
-    public void enable2o5(){
+    public void enable2o5() {
         Intent i = new Intent("de.aitronic.scanner.CONFIG_TWOD");
         String[] config = new String[6];
 
         if (swEnable2o5.isChecked()) {
             config[0] = "6;1;bool"; // Interleaved active
             config[3] = "5;1;bool"; // Discreet active
-        }
-        else {
+        } else {
             config[0] = "6;0;bool"; // Interleaved inactive
             config[3] = "5;0;bool"; // Discreet inactive
         }
@@ -276,7 +320,6 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("config", config);
         sendBroadcast(i);
     }
-
 
 
     /**
@@ -309,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
         if (barcode)
             i.putExtra("scanner_types", 1);
         else
-            i.putExtra("scanner_types", 22);
+            i.putExtra("scanner_types", 0b01000);
         sendBroadcast(i);
     }
 
