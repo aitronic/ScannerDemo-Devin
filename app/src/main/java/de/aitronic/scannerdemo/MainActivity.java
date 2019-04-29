@@ -118,25 +118,35 @@ public class MainActivity extends AppCompatActivity {
                 soundManager.playSound(1);
 
 
+                // SIMPLE COMMAND EXAMPLES
+
+
                 // EXAMPLE on how to use SIMPLE_COMMANDS to read more data from a tag
-                if (type.equals("#80")) {
+                if (type.equals("#80")) { // MIFARE
                     // Example of Mifare Read Blocks
                     // Mifare Read
                     Log.e("MainActivity", "MIFARE FOUND, STARTING GET VERSION");
                     Intent intent_login = new Intent("de.aitronic.scanner.SIMPLE_COMMAND");
                     intent_login.putExtra("simpleCommand", "0004FF");
                     sendBroadcast(intent_login);
-                } else if (type.equals("#82")) {
-                    // Example of Special Read Blocks for ISO15693
-                    Log.e("MainActivity", "ISO15693 FOUND, STARTING GET SystemInformation");
-                    Intent intent_login = new Intent("de.aitronic.scanner.SIMPLE_COMMAND");
 
-                    // SINGLE COMMAND TO WRITE BLOCK 0500
-                    // intent_login.putExtra("simpleCommand", "0D0705000411223344");
+                } else if (type.equals("#82")) { // ISO15693
 
+                    Intent intent_simple_command = new Intent("de.aitronic.scanner.SIMPLE_COMMAND");
+
+                    // METHOD 1
+                    // EXAMPLE OF READ BLOCK for ISO15693
+                    intent_simple_command.putExtra("simpleCommand", "0D050000FF");
+
+
+                    // SIMPLE COMMAND TO WRITE BLOCK 0500
+                    // intent_simple_command.putExtra("simpleCommand", "0D0705000411223344");
+
+
+                    // METHOD 2
                     // SIMPLE COMMAND ARRAY
-                    // WRITE BLOCK 0500 AND READ BLOCK 0500
-                    intent_login.putExtra("simpleCommandArray", new String[]{
+                    // WRITE BLOCK 0300 AND READ BLOCKS 0000 - 0500
+                    /* intent_simple_command.putExtra("simpleCommandArray", new String[]{
                             "0D070300081122334455667788",
                             "0D050000FF",
                             "0D050100FF",
@@ -144,8 +154,11 @@ public class MainActivity extends AppCompatActivity {
                             "0D050300FF",
                             "0D050400FF",
                             "0D050500FF"
-                    });
-                    sendBroadcast(intent_login);
+                    })*/
+
+                    sendBroadcast(intent_simple_command);
+
+
                     //} else if (type.equals("#F0"))  {
                     // Available from Devin >= 1.8.0
 
@@ -164,12 +177,12 @@ public class MainActivity extends AppCompatActivity {
                     // Write UHF
                     // Writes data to the selected location and reads the segment that should have been
                     // written. It sends back the read data as a SIMPLE_COMMAND_RESULT
-                    Intent intent_login = new Intent("de.aitronic.uhfscanner.WRITE_DATA");
-                    intent_login.putExtra("bank", 1);
-                    intent_login.putExtra("data", "2423"); // Hex-Data, length has to be multiples of 4 (=Word = 2bytes)
-                    intent_login.putExtra("offset", 2);
-                    intent_login.putExtra("accessPassword", "00000000"); // default often is 00000000
-                    sendBroadcast(intent_login);
+                    Intent intent_simple_command = new Intent("de.aitronic.uhfscanner.WRITE_DATA");
+                    intent_simple_command.putExtra("bank", 1);
+                    intent_simple_command.putExtra("data", "2423"); // Hex-Data, length has to be multiples of 4 (=Word = 2bytes)
+                    intent_simple_command.putExtra("offset", 2);
+                    intent_simple_command.putExtra("accessPassword", "00000000"); // default often is 00000000
+                    sendBroadcast(intent_simple_command);
                     */
 
 
@@ -184,18 +197,20 @@ public class MainActivity extends AppCompatActivity {
                     power.putExtra("power", "5");
                     sendBroadcast(power);
 
-                    Intent intent_login = new Intent("de.aitronic.uhfscanner.READ_DATA");
-                    intent_login.putExtra("bank", 1);
-                    intent_login.putExtra("count", 6); // reads 6 "words = 2bytes"
-                    intent_login.putExtra("offset", 2);
-                    intent_login.putExtra("accessPassword", "00000000"); // default often is 00000000
-                    sendBroadcast(intent_login);
+                    Intent intent_simple_command = new Intent("de.aitronic.uhfscanner.READ_DATA");
+                    intent_simple_command.putExtra("bank", 1);
+                    intent_simple_command.putExtra("count", 6); // reads 6 "words = 2bytes"
+                    intent_simple_command.putExtra("offset", 2);
+                    intent_simple_command.putExtra("accessPassword", "00000000"); // default often is 00000000
+                    sendBroadcast(intent_simple_command);
                     */
                 }
             } else {
-                // Result von Single SimpleCommand
+                // HANDLE RESULTS
+
+                // RESULT FROM Single SimpleCommand
                 String result = intent.getStringExtra("result");
-                // Result-Array von Multi SimpleCommand
+                // RESULT-ARRAY from Multi SimpleCommand
                 String[] resultArray = intent.getStringArrayExtra("resultArray");
                 if (result != null)
                     Log.e("ScannerDemo", "RESULT: " + result);
